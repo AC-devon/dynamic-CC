@@ -1,13 +1,15 @@
 <template>
   <div id="app">
     <Card v-bind="{year,month,cc,numKey,typeCvv,cvv}"/>
-    <numKeyBoard
+    <div id="key-board-wrap">
+          <numKeyBoard
       v-if="step < 4"
       v-show="!numKey"
       v-bind="{typeCvv}"
       v-on:keyPressed="updateKeyPress($event)"
     />
     <dateKeyBoard v-if="step < 4" v-show="numKey" v-on:datePressed="datePressed($event)"/>
+    </div>
     <level v-if="step < 4" :step="step"/>
     <pay-btn v-show="step >= 4" :style="{ bottom: bottom }"/>
   </div>
@@ -60,9 +62,15 @@ export default {
           }, 500);
         }
       } else {
-        this.cc = this.cc.split("");
+        if (item.val == "x") {
+          this.cc = this.cc.split("");
+          this.cc[item.index+1] = item.val;
+          this.cc = this.cc.join("");
+        }else{
+                  this.cc = this.cc.split("");
         this.cc[item.index] = item.val;
         this.cc = this.cc.join("");
+        }
         if (item.index == 18) {
           this.numKey = !this.numKey;
           this.step = 2;
@@ -79,8 +87,8 @@ export default {
         }
         this.month = addZero;
       }
-
-      if (this.year != "xx" && this.year != "xx") {
+        
+      if (this.year != "xx" && this.month != "xx") {
         this.step = 3;
         this.typeCvv = true;
         this.numKey = !this.numKey;

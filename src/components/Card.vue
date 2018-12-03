@@ -5,12 +5,16 @@
       <div id="front-card">
         <div id="credit-conent">
           <div id="brand">
-            <div id="provider-brand">leumi</div>
-            <div id="card-brand">visa</div>
+            <div id="provider-brand">BRAND</div>
+            <div id="card-brand" >
+               <transition name="fade">
+              <font-awesome-icon v-if="icon" :icon="icon"/>
+               </transition>
+            </div>
           </div>
           <div id="card-number">
             <label id="card-label" :class="{ 'active-label': !numKey }">card number</label>
-            <input type="text" max-length="16" id="cc" v-model="cc">
+            <span id="cc">{{cc}}</span>
           </div>
           <div id="card-exp">
             <label id="exp-label" :class="{ 'active-label': numKey }">exp date</label>
@@ -46,12 +50,56 @@ export default {
     numKey: Boolean,
     typeCvv: Boolean
   },
-  methods: {}
+  computed: {
+    icon () {
+
+      let visaPattern = new RegExp("^4[0-9]{12}(?:[0-9]{3})?$");
+      let mastPattern = new RegExp("^(?:5[1-5][0-9]{14})$");
+      let amexPattern = new RegExp("^(?:3[47][0-9]{13})$");
+      let discPattern = new RegExp("^(?:6(?:011|5[0-9][0-9])[0-9]{12})$");
+      let dinersPattern = new RegExp("^3(?:0[0-5]|[68][0-9])[0-9]{11}$");
+      let jcbPattern = new RegExp("^(?:2131|1800|35[0-9]{3})[0-9]{11}");
+  
+      let isVisa =
+        visaPattern.test(this.cc.replace (/[A-Za-z|\s]/g, '')) === true;
+      let isMast =
+        mastPattern.test(this.cc.replace (/[A-Za-z|\s]/g, '')) === true;
+      let isAmex =
+        amexPattern.test(this.cc.replace (/[A-Za-z|\s]/g, '')) === true;
+      let isDisc =
+        discPattern.test(this.cc.replace (/[A-Za-z|\s]/g, '')) === true;
+      let isDiners =
+        dinersPattern.test(this.cc.replace (/[A-Za-z|\s]/g, '')) === true;
+      let isJcb =
+        jcbPattern.test(this.cc.replace (/[A-Za-z|\s]/g, '')) === true;
+        let result;
+      if (isVisa) {
+        result =  "credit-card";
+      } else if (isMast) {
+         result =   "isMast";
+      } else if (isAmex) {
+         result =   "isAmex";
+      } else if (isDisc) {
+         result =   "isDisc";
+      } else if (isDiners) {
+         result =   "isDiners";
+      } else if (isJcb) {
+         result =   "isJcb";
+      }
+      return result;
+    }
+  }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 #card-wrap {
   position: relative;
   width: 425px;
@@ -64,7 +112,7 @@ export default {
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: all 0.5s ease;
+  transition: all 1s ease;
   color: gray;
   text-transform: uppercase;
   text-align: left;
@@ -117,7 +165,7 @@ export default {
   outline: 0;
   width: 100%;
   word-spacing: 8px;
-  font-size: 26px;
+  font-size: 25px;
   color: gray;
 }
 
